@@ -235,12 +235,7 @@ p {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(20, 20, 20, 0.8) 0%,
-    rgba(20, 20, 20, 0.4) 50%,
-    transparent 100%
-  );
+  background: none;
 }
 
 .hero-content {

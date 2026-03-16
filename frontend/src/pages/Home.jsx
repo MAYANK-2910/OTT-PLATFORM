@@ -1,29 +1,21 @@
-import { useNavigate } from "react-router-dom";
 import { movies } from "../data/movies";
+import MovieRow from "../components/MovieRow";
 
-function Home() {
-  const navigate = useNavigate();
+function Home(){
 
-  return (
-    <div style={{ padding: "40px", color: "white" }}>
-      <h1>🎬 Popular Movies</h1>
-      
-      <div className="movies-grid">
-        {movies.map((movie) => (
-          <div 
-            key={movie.id} 
-            className="movie-card"
-            onClick={() => navigate(`/movie/${movie.id}`)}
-          >
-            <img src={movie.image} alt={movie.title} />
-            <h3>{movie.title}</h3>
-            <p>⭐ {movie.rating}</p>
-            <p>{movie.genre}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+const trending = movies.filter(m=>m.rating > 8)
+
+return(
+
+<div className="home">
+
+<MovieRow title="Trending" movies={trending}/>
+<MovieRow title="All Movies" movies={movies}/>
+
+</div>
+
+)
+
 }
 
 export default Home;

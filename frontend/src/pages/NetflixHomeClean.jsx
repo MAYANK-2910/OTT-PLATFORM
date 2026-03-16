@@ -1,8 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Play, Info, Plus, ThumbsUp, Search, Bell, User, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useButtonActions } from '../utils/buttonActions';
+import NotificationBar from '../components/NotificationBar';
 
 const NetflixHomeClean = () => {
+  const navigate = useNavigate();
+  const {
+    handlePlay,
+    handleAddToList,
+    handleLike,
+    handleInfo,
+    handleNavigation,
+    handleSearch,
+    handleFilter,
+    handleSort
+  } = useButtonActions();
+  
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -195,30 +210,33 @@ const NetflixHomeClean = () => {
     }, 1000);
   }, []);
 
-  const handlePlay = (item) => {
-    console.log('Playing:', item.title);
-    window.location.href = `/watch/${item.id}`;
+  const handlePlayItem = (item) => {
+    handlePlay(item, 'movie');
   };
 
-  const handleInfo = (item) => {
-    console.log('Info for:', item.title);
+  const handleInfoItem = (item) => {
+    handleInfo(item);
   };
 
-  const handleAddToList = (item) => {
-    console.log('Added to list:', item.title);
+  const handleAddToListItem = (item) => {
+    handleAddToList(item, false);
   };
 
-  const handleLike = (item) => {
-    console.log('Liked:', item.title);
+  const handleLikeItem = (item) => {
+    handleLike(item, false);
   };
 
-  const handleSearch = (e) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      console.log('Searching:', searchQuery);
+      handleSearch(searchQuery);
       setIsSearchOpen(false);
       setSearchQuery('');
     }
+  };
+
+  const handleNavigationClick = (path, pageName) => {
+    handleNavigation(path, pageName);
   };
 
   const scrollRow = (direction, ref) => {
@@ -259,7 +277,7 @@ const NetflixHomeClean = () => {
             {/* Logo */}
             <div 
               className="navbar-brand"
-              onClick={() => window.location.href = '/'}
+              onClick={() => handleNavigationClick('/', 'Home')}
             >
               <div className="logo">S</div>
               STREAMFLIX
@@ -277,7 +295,7 @@ const NetflixHomeClean = () => {
                 <li key={item.name}>
                   <button 
                     className="nav-link"
-                    onClick={() => window.location.href = item.path}
+                    onClick={() => handleNavigationClick(item.path, item.name)}
                     style={{ 
                       fontWeight: item.name === 'Home' ? 600 : 400,
                       textDecoration: item.name === 'Home' ? 'underline' : 'none'
@@ -295,7 +313,7 @@ const NetflixHomeClean = () => {
             {/* Search */}
             <div className="search-container">
               {isSearchOpen ? (
-                <form onSubmit={handleSearch}>
+                <form onSubmit={handleSearchSubmit}>
                   <input
                     type="text"
                     value={searchQuery}
@@ -317,29 +335,21 @@ const NetflixHomeClean = () => {
                   onClick={() => setIsSearchOpen(true)}
                   className="icon-button"
                 >
-                  <Search size={16} />
+                  <Search size={20} />
                 </button>
               )}
             </div>
 
             {/* Notifications */}
-            <button className="icon-button">
-              <Bell size={16} />
-              <span style={{ 
-                position: 'absolute', 
-                top: '4px', 
-                right: '4px', 
-                width: '8px', 
-                height: '8px', 
-                background: '#e50914', 
-                borderRadius: '50%' 
-              }}></span>
-            </button>
+            <NotificationBar />
 
             {/* Profile */}
-            <div className="profile-button">
-              <User size={16} />
-            </div>
+            <button 
+              onClick={() => handleNavigationClick('/profile', 'Profile')}
+              className="icon-button"
+            >
+              <User size={20} />
+            </button>
           </div>
         </div>
       </nav>
@@ -398,14 +408,14 @@ const NetflixHomeClean = () => {
                     className="hero-buttons"
                   >
                     <button
-                      onClick={() => handlePlay(item)}
+                      onClick={() => handlePlayItem(item)}
                       className="btn btn-primary btn-lg"
                     >
                       <Play size={20} fill="currentColor" />
                       Play
                     </button>
                     <button
-                      onClick={() => handleInfo(item)}
+                      onClick={() => handleInfoItem(item)}
                       className="btn btn-secondary btn-lg"
                     >
                       <Info size={20} />
@@ -593,7 +603,7 @@ const NetflixHomeClean = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="netflix-card"
-              onClick={() => handleInfo(item)}
+              onClick={() => handleInfoItem(item)}
             >
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 <img
@@ -750,7 +760,7 @@ const NetflixHomeClean = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="netflix-card"
-              onClick={() => handleInfo(item)}
+              onClick={() => handleInfoItem(item)}
             >
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 <img
@@ -907,7 +917,7 @@ const NetflixHomeClean = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="netflix-card"
-              onClick={() => handleInfo(item)}
+              onClick={() => handleInfoItem(item)}
             >
               <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                 <img

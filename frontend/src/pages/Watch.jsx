@@ -5,7 +5,7 @@ import { ArrowLeft, Share2, ThumbsUp, ThumbsDown, Plus, Volume2, Settings } from
 import VideoPlayer from '../components/ui/VideoPlayer';
 import NeonButton from '../components/ui/NeonButton';
 import { useDemoStore } from '../store/demoStore';
-import { formatDuration, formatDate } from '../utils/format';
+import { formatDuration } from '../utils/format';
 
 function Watch() {
   const { id } = useParams();
@@ -18,10 +18,8 @@ function Watch() {
     updateViewingHistory 
   } = useDemoStore();
   
-  const [showControls, setShowControls] = useState(true);
   const [userRating, setUserRating] = useState(0);
   const [showShareOptions, setShowShareOptions] = useState(false);
-  const [relatedContent, setRelatedContent] = useState([]);
 
   useEffect(() => {
     if (id) {
@@ -29,14 +27,10 @@ function Watch() {
       // Fetch related content
       // fetchSimilarContent(id);
     }
-  }, [id]);
+  }, [id, fetchContentById]);
 
   const handlePlay = () => {
     // Start playing logic
-  };
-
-  const handlePause = () => {
-    // Pause logic
   };
 
   const handleProgress = (progress) => {

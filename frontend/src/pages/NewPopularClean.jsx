@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Play, Plus, ThumbsUp, Info, Filter, Grid, List, TrendingUp, ArrowLeft, Calendar, Star } from 'lucide-react';
 
 const NewPopularClean = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -330,7 +332,7 @@ const NewPopularClean = () => {
 
   const handlePlay = (item) => {
     console.log('Playing:', item.title);
-    window.location.href = `/watch/${item.id}`;
+    navigate(`/watch/${item.id}`);
   };
 
   const handleAddToList = (item) => {
@@ -426,7 +428,7 @@ const NewPopularClean = () => {
             {/* Logo */}
             <div 
               className="navbar-brand"
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             >
               <div className="logo">S</div>
               STREAMFLIX
@@ -434,16 +436,23 @@ const NewPopularClean = () => {
 
             {/* Navigation Links */}
             <ul className="navbar-nav">
-              {['Home', 'TV Shows', 'Movies', 'New & Popular', 'My List'].map((item) => (
-                <li key={item}>
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'TV Shows', path: '/tv-shows' },
+                { name: 'Movies', path: '/movies' },
+                { name: 'New & Popular', path: '/new-popular' },
+                { name: 'My List', path: '/my-list' }
+              ].map((item) => (
+                <li key={item.name}>
                   <button 
                     className="nav-link"
+                    onClick={() => navigate(item.path)}
                     style={{ 
-                      fontWeight: item === 'New & Popular' ? 600 : 400,
-                      textDecoration: item === 'New & Popular' ? 'underline' : 'none'
+                      fontWeight: item.name === 'New & Popular' ? 600 : 400,
+                      textDecoration: item.name === 'New & Popular' ? 'underline' : 'none'
                     }}
                   >
-                    {item}
+                    {item.name}
                   </button>
                 </li>
               ))}

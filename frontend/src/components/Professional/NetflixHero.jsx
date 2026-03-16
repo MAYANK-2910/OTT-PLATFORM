@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Info, Volume2, VolumeX, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const NetflixHero = ({ content, autoPlay = true }) => {
+  const navigate = useNavigate();
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -67,6 +69,10 @@ const NetflixHero = ({ content, autoPlay = true }) => {
     }
   };
 
+  const handleMoreInfo = () => {
+    navigate(`/movie/${currentHero.id}`);
+  };
+
   const handleMuteToggle = () => {
     setIsMuted(!isMuted);
     if (videoRef.current) {
@@ -100,9 +106,7 @@ const NetflixHero = ({ content, autoPlay = true }) => {
           onEnded={handleVideoEnd}
           playsInline
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-      </div>
+              </div>
 
       {/* Navigation Arrows */}
       <button
@@ -169,7 +173,10 @@ const NetflixHero = ({ content, autoPlay = true }) => {
               <Play className="w-5 h-5" fill="black" />
               Play
             </button>
-            <button className="btn btn-secondary btn-lg flex items-center gap-2 bg-gray-600/80 text-white hover:bg-gray-500">
+            <button 
+              onClick={handleMoreInfo}
+              className="btn btn-secondary btn-lg flex items-center gap-2 bg-gray-600/80 text-white hover:bg-gray-500"
+            >
               <Info className="w-5 h-5" />
               More Info
             </button>

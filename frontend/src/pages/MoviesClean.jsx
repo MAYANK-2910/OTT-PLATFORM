@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Play, Plus, ThumbsUp, Info, Filter, Grid, List, Film, ArrowLeft } from 'lucide-react';
 
 const MoviesClean = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -223,18 +225,25 @@ const MoviesClean = () => {
       default:
         break;
     }
-
+    
     setFilteredMovies(filtered);
   }, [movies, selectedGenre, sortBy]);
 
-  const handlePlay = (movie) => {
-    console.log('Playing movie:', movie.title);
-    window.location.href = `/watch/${movie.id}`;
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const handleAddToList = (movie) => {
-    console.log('Adding to list:', movie.title);
-  };
+useEffect(() => {
+  setTimeout(() => {
+    setMovies(moviesData);
+    setFilteredMovies(moviesData);
+    setLoading(false);
+  }, 1000);
+}, []);
 
   const handleLike = (movie) => {
     console.log('Liking movie:', movie.title);
@@ -325,7 +334,7 @@ const MoviesClean = () => {
             {/* Logo */}
             <div 
               className="navbar-brand"
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             >
               <div className="logo">S</div>
               STREAMFLIX
@@ -343,7 +352,7 @@ const MoviesClean = () => {
                 <li key={item.name}>
                   <button 
                     className="nav-link"
-                    onClick={() => window.location.href = item.path}
+                    onClick={() => navigate(item.path)}
                     style={{ 
                       fontWeight: item.name === 'Movies' ? 600 : 400,
                       textDecoration: item.name === 'Movies' ? 'underline' : 'none'

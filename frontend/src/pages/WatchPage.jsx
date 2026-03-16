@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Play, 
@@ -94,7 +94,7 @@ const WatchPage = () => {
         navigate('/');
       }
     }, 1000);
-  }, [id, navigate]);
+  }, [id, navigate, contentData]);
 
   useEffect(() => {
     const video = videoRef.current;

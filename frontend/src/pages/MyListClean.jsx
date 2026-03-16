@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Play, Plus, ThumbsUp, Info, Filter, Grid, List, Heart, ArrowLeft, Trash2, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Play, Plus, ThumbsUp, Info, Filter, Grid, List, Heart, ArrowLeft, Trash2, Check, Search, Star, Calendar, Clock, ChevronLeft, ChevronRight, Download, Share2, MoreVertical, Eye, EyeOff, FolderOpen, Tag, Globe, Zap, Laugh } from 'lucide-react';
 
 const MyListClean = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -13,15 +15,22 @@ const MyListClean = () => {
   const [myList, setMyList] = useState([]);
   const [filteredMyList, setFilteredMyList] = useState([]);
   const [selectedItems, setSelectedItems] = useState(new Set());
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const [selectedShow, setSelectedShow] = useState(null);
+  const [showFolders, setShowFolders] = useState(false);
+  const [activeFolder, setActiveFolder] = useState('all');
+  
+  // Refs for scrolling
+  const myListRowRef = useRef(null);
 
-  // My List data
+  // Enhanced My List data with more features
   const myListData = [
     {
       id: 1,
       title: "Stranger Things",
       description: "When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces in order to get him back.",
-      posterUrl: "https://picsum.photos/seed/stranger-things/200/113",
-      backdropUrl: "https://picsum.photos/seed/stranger-things-bg/1920/1080",
+      posterUrl: "https://picsum.photos/seed/stranger-things-netflix/300/450",
+      backdropUrl: "https://picsum.photos/seed/stranger-things-backdrop/1920/1080",
       year: "2016",
       rating: "TV-14",
       match: "98",
@@ -31,8 +40,15 @@ const MyListClean = () => {
       episodes: "42 Episodes",
       duration: "45 min",
       dateAdded: "2024-01-15",
+      lastWatched: "2024-01-20",
       watched: true,
-      progress: 75
+      progress: 75,
+      imdb: 8.7,
+      folder: "Favorites",
+      tags: ["binge-worthy", "sci-fi", "80s"],
+      downloaded: false,
+      shared: false,
+      reminder: "New season coming soon"
     },
     {
       id: 2,
@@ -263,7 +279,7 @@ const MyListClean = () => {
 
   const handlePlay = (item) => {
     console.log('Playing:', item.title);
-    window.location.href = `/watch/${item.id}`;
+    navigate(`/watch/${item.id}`);
   };
 
   const handleRemoveFromList = (item) => {
@@ -399,7 +415,7 @@ const MyListClean = () => {
             {/* Logo */}
             <div 
               className="navbar-brand"
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             >
               <div className="logo">S</div>
               STREAMFLIX
@@ -407,16 +423,23 @@ const MyListClean = () => {
 
             {/* Navigation Links */}
             <ul className="navbar-nav">
-              {['Home', 'TV Shows', 'Movies', 'New & Popular', 'My List'].map((item) => (
-                <li key={item}>
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'TV Shows', path: '/tv-shows' },
+                { name: 'Movies', path: '/movies' },
+                { name: 'New & Popular', path: '/new-popular' },
+                { name: 'My List', path: '/my-list' }
+              ].map((item) => (
+                <li key={item.name}>
                   <button 
                     className="nav-link"
+                    onClick={() => navigate(item.path)}
                     style={{ 
-                      fontWeight: item === 'My List' ? 600 : 400,
-                      textDecoration: item === 'My List' ? 'underline' : 'none'
+                      fontWeight: item.name === 'My List' ? 600 : 400,
+                      textDecoration: item.name === 'My List' ? 'underline' : 'none'
                     }}
                   >
-                    {item}
+                    {item.name}
                   </button>
                 </li>
               ))}
@@ -632,18 +655,8 @@ const MyListClean = () => {
               Start adding movies and TV shows to your list to see them here
             </p>
             <button
-              onClick={() => window.location.href = '/'}
-              style={{
-                background: '#e50914',
-                color: 'white',
-                border: 'none',
-                padding: '0.875rem 2rem',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors"
               onMouseEnter={(e) => e.target.style.background = '#f40612'}
               onMouseLeave={(e) => e.target.style.background = '#e50914'}
             >

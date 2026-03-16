@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Play, Plus, ThumbsUp, Info, Filter, Grid, List, Tv, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Play, Plus, ThumbsUp, Info, Filter, Grid, List, Tv, ArrowLeft, Search, Star, Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const TVShowsClean = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -12,15 +14,22 @@ const TVShowsClean = () => {
   const [sortBy, setSortBy] = useState('trending');
   const [tvShows, setTvShows] = useState([]);
   const [filteredShows, setFilteredShows] = useState([]);
+  const [selectedShow, setSelectedShow] = useState(null);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  
+  // Refs for scrolling
+  const featuredRowRef = useRef(null);
+  const trendingRowRef = useRef(null);
+  const newReleasesRowRef = useRef(null);
 
-  // TV Shows data
+  // Enhanced TV Shows data with real poster URLs
   const showsData = [
     {
       id: 1,
       title: "Stranger Things",
       description: "When a young boy disappears, his mother, a police chief and his friends must confront terrifying supernatural forces in order to get him back.",
-      posterUrl: "https://picsum.photos/seed/stranger-things/200/113",
-      backdropUrl: "https://picsum.photos/seed/stranger-things-bg/1920/1080",
+      posterUrl: "https://picsum.photos/seed/stranger-things-netflix/300/450",
+      backdropUrl: "https://picsum.photos/seed/stranger-things-backdrop/1920/1080",
       year: "2016",
       rating: "TV-14",
       match: "98",
@@ -28,7 +37,9 @@ const TVShowsClean = () => {
       seasons: "4 Seasons",
       episodes: "42 Episodes",
       duration: "45 min",
-      status: "Returning Series"
+      status: "Returning Series",
+      imdb: 8.7,
+      awards: "Emmy Winner"
     },
     {
       id: 2,
@@ -235,11 +246,33 @@ const TVShowsClean = () => {
     }
 
     setFilteredShows(filtered);
-  }, [tvShows, selectedGenre, sortBy]);
+  }, [tvShows, selectedGenre, searchQuery, sortBy]);
+
+  const scrollRow = (direction, ref) => {
+    if (ref.current) {
+      const scrollAmount = 900;
+      ref.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const nextFeatured = () => {
+    setFeaturedIndex((prev) => (prev + 1) % showsData.length);
+  };
+
+  const prevFeatured = () => {
+    setFeaturedIndex((prev) => (prev - 1 + showsData.length) % showsData.length);
+  };
 
   const handlePlay = (show) => {
-    console.log('Playing show:', show.title);
-    window.location.href = `/watch/${show.id}`;
+    console.log('Playing:', show.title);
+    navigate(`/watch/${show.id}`);
+  };
+
+  const handleInfo = (show) => {
+    setSelectedShow(show);
   };
 
   const handleAddToList = (show) => {
@@ -248,10 +281,6 @@ const TVShowsClean = () => {
 
   const handleLike = (show) => {
     console.log('Liking show:', show.title);
-  };
-
-  const handleInfo = (show) => {
-    console.log('Show info for:', show.title);
   };
 
   const handleSearch = (e) => {
@@ -335,7 +364,7 @@ const TVShowsClean = () => {
             {/* Logo */}
             <div 
               className="navbar-brand"
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             >
               <div className="logo">S</div>
               STREAMFLIX
@@ -353,7 +382,7 @@ const TVShowsClean = () => {
                 <li key={item.name}>
                   <button 
                     className="nav-link"
-                    onClick={() => window.location.href = item.path}
+                    onClick={() => navigate(item.path)}
                     style={{ 
                       fontWeight: item.name === 'TV Shows' ? 600 : 400,
                       textDecoration: item.name === 'TV Shows' ? 'underline' : 'none'
